@@ -29,81 +29,64 @@ Program to implement the the Logistic Regression Model to Predict the Placement 
 Developed by: Subashini.S
 RegisterNumber:  212222240106
 */
-
-
-
-#import modules
+```
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+data=pd.read_csv("Placement_Data.csv")
+data.head()
 
-#reading the file
-dataset = pd.read_csv('Placement_Data_Full_Class.csv')
-dataset
+data1=data.copy()
+data1=data1.drop(["sl_no","salary"],axis=1)#Browses the specified row or column
+data1.head()
 
-dataset.head(20)
+data1.isnull().sum()
 
-dataset.tail(20)
+data1.duplicated().sum()
 
-#droping tha serial no salary col
-dataset = dataset.drop('sl_no',axis=1)
-#dataset = dataset.drop('salary',axis=1)
+from sklearn.preprocessing import LabelEncoder
+le=LabelEncoder()
+data1["gender"]=le.fit_transform(data1["gender"])
+data1["ssc_b"]=le.fit_transform(data1["ssc_b"])
+data1["hsc_b"]=le.fit_transform(data1["hsc_b"])
+data1["hsc_s"]=le.fit_transform(data1["hsc_s"])
+data1["degree_t"]=le.fit_transform(data1["degree_t"])
+data1["workex"]=le.fit_transform(data1["workex"])
+data1["specialisation"]=le.fit_transform(data1["specialisation"] )     
+data1["status"]=le.fit_transform(data1["status"])       
+data1 
 
-dataset = dataset.drop('gender',axis=1)
-dataset = dataset.drop('ssc_b',axis=1)
-dataset = dataset.drop('hsc_b',axis=1)
-dataset
+x=data1.iloc[:,:-1]
+x
 
-dataset.shape
-
-dataset.info()
-
-#catgorising col for further labelling
-dataset["degree_t"] = dataset["degree_t"].astype('category')
-dataset["workex"] = dataset["workex"].astype('category')
-dataset["specialisation"] = dataset["specialisation"].astype('category')
-dataset["status"] = dataset["status"].astype('category')
-dataset["hsc_s"] = dataset["hsc_s"].astype('category')
-dataset.dtypes
-
-dataset.info()
-
-dataset["degree_t"] = dataset["degree_t"].cat.codes
-dataset["workex"] = dataset["workex"].cat.codes
-dataset["specialisation"] = dataset["specialisation"].cat.codes
-dataset["status"] = dataset["status"].cat.codes
-dataset["hsc_s"] = dataset["hsc_s"].cat.codes
-dataset
-
-dataset.info()
-
-dataset
-
-#selecting the features and labels
-x = dataset.iloc[:,:-1].values
-y = dataset.iloc[:,-1].values
+y=data1["status"]
 y
 
 from sklearn.model_selection import train_test_split
-x_train,x_test,y_train,y_test = train_test_split(x, y,test_size=0.2)
-dataset.head()
-
-x_train.shape
-
-x_test.shape
-
-y_train.shape
-
-y_test.shape
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
 
 from sklearn.linear_model import LogisticRegression
-clf= LogisticRegression()
-clf.fit(x_train,y_train)
-clf.score(x_test,y_test)
+lr=LogisticRegression(solver="liblinear")
+lr.fit(x_train,y_train)
+y_pred=lr.predict(x_test)
+y_pred
 
-clf.predict([[0, 87, 0, 95, 0, 2, 78, 2, 0]])
-*/
+from sklearn.metrics import accuracy_score
+accuracy=accuracy_score(y_test,y_pred)
+accuracy
+
+from sklearn.metrics import confusion_matrix
+confusion=confusion_matrix(y_test,y_pred)
+confusion
+
+from sklearn.metrics import classification_report
+classification_report1 = classification_report(y_test,y_pred)
+print(classification_report1)
+
+lr.predict([[1,80,1,90,1,1,90,1,0,85,1,85]])
 ```
+
+
+
+
 ## Output:
 ## Placement data:
 ![277169578-0d65163e-89bd-4559-a827-b6c984a8b69c](https://github.com/SubashiniSenniappan/Implementation-of-Logistic-Regression-Model-to-Predict-the-Placement-Status-of-Student/assets/119404951/5def67ba-e4ba-4071-b836-3bf5736d0ad0)
